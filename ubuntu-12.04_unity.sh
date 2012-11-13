@@ -98,6 +98,11 @@ export DEBIAN_FRONTEND="noninteractive"
 export DEBIAN_PRIORITY="critical"
 
 ########################################################################
+#Mettre la station à l'heure à partir du serveur Scribe
+########################################################################
+ntpdate $ipscribe
+
+########################################################################
 #installation des paquets necessaires
 #numlockx pour le verrouillage du pave numerique
 #unattended-upgrades pour forcer les mises à jour de sécurité à se faire
