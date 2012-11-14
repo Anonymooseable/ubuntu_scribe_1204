@@ -89,7 +89,7 @@ then
 echo "Exclusions non renseignées !"
 exclusionsproxy=$exclusionsproxypardefaut
 fi
-echo "Page de démarrage choisie = "$exclusionsproxy
+echo "Exclusions choisies = "$exclusionsproxy
 
 ########################################################################
 #rendre debconf silencieux
