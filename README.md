@@ -6,6 +6,7 @@ Avant de lancer ce script, assurez-vous d'avoir installé toutes vos application
 avec la solution libre OSCAR : http://oscar.crdp-lyon.fr/wiki/
 
 Télécharger le script via la commande :
+
 wget https://github.com/bristow/ubuntu_scribe_1204/raw/master/ubuntu-12.04_unity.sh \
  & chmod +x ubuntu-12.04_unity.sh \
  & sudo ./ubuntu-12.04_unity.sh
