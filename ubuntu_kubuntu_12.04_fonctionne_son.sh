@@ -79,11 +79,7 @@ export DEBIAN_PRIORITY="high"
 #parametrage du script de demontage du netlogon pour lightdm
 ########################################################################
 touch /etc/lightdm/logonscript.sh
-grep "if mount | grep -q \"/tmp/netlogon\" ; then umount /tmp/netlogon ;fi"  /etc/lightdm/logonscript.sh  >/dev/null
-if [ $? == 0 ]
-then echo "Presession Ok"
-else echo  "if mount | grep -q \"/tmp/netlogon\" ; then umount /tmp/netlogon ;fi" >> /etc/lightdm/logonscript.sh
-fi
+grep "if mount | grep -q \"/tmp/netlogon\" ; then umount /tmp/netlogon ;fi"  /etc/lightdm/logonscript.sh  >/dev/null; if [ $? == 0 ];then echo "Presession Ok"; else echo  "if mount | grep -q \"/tmp/netlogon\" ; then umount /tmp/netlogon ;fi" >> /etc/lightdm/logonscript.sh;fi
 chmod +x /etc/lightdm/logonscript.sh
 
 touch /etc/lightdm/logoffscript.sh
