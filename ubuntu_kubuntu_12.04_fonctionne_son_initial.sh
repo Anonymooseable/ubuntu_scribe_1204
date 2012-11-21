@@ -76,7 +76,7 @@ export DEBIAN_FRONTEND="dialog"
 export DEBIAN_PRIORITY="high" 
 
 touch /etc/lightdm/script.sh
-echo "GVFS_DISABLE_FUSE=1" >> /etc/environment
+
 #umount /media/netlogon dans  /etc/gdm/PreSession/Default (pour creer partage groupes)
 grep "if mount | grep -q \"/media/netlogon\" ; then umount /media/netlogon ;fi"  /etc/lightdm/script.sh  >/dev/null; if [ $? == 0 ];then echo "Presession Ok"; else echo  "if mount | grep -q \"/media/netlogon\" ; then umount /media/netlogon ;fi" >> /etc/lightdm/script.sh;fi
 chmod +x /etc/lightdm/script.sh
