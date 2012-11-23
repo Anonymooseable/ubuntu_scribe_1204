@@ -161,7 +161,13 @@ export LANGUAGE=fr_FR.utf8
 sed -i "s/enabled=True/enabled=False/g" /etc/xdg/user-dirs.conf
 
 # les profs peuvent sudo
-grep "%DomainAdmins ALL=(ALL) ALL" /etc/sudoers > /dev/null; if [ $?!=0 ];then sed -i "/%admin ALL=(ALL) ALL/a\%DomainAdmins ALL=(ALL) ALL" /etc/sudoers; else echo "prof deja dans sudo";fi 
+grep "%DomainAdmins ALL=(ALL) ALL" /etc/sudoers > /dev/null
+if [ $?!=0 ]
+then
+  sed -i "/%admin ALL=(ALL) ALL/a\%DomainAdmins ALL=(ALL) ALL" /etc/sudoers
+else
+  echo "prof deja dans sudo"
+fi 
 
 ########################################################################
 #parametrage du lightdm.conf
@@ -179,12 +185,56 @@ echo "
 " > /etc/lightdm/lightdm.conf
 
 #/etc/security/group.conf
-grep "*;*;*;Al0000-2400;floppy,audio,cdrom,video,plugdev,scanner" /etc/security/group.conf  >/dev/null; if [ $? != 0 ];then echo "*;*;*;Al0000-2400;floppy,audio,cdrom,video,plugdev,scanner" >> /etc/security/group.conf; else echo "group.conf ok";fi
+grep "*;*;*;Al0000-2400;floppy,audio,cdrom,video,plugdev,scanner" /etc/security/group.conf  >/dev/null
+if [ $? != 0 ]
+then
+  echo "*;*;*;Al0000-2400;floppy,audio,cdrom,video,plugdev,scanner" >> /etc/security/group.conf
+else
+  echo "group.conf ok"
+fi
+
+########################################################################
+#supression de l'applet switch-user pour ne pas voir les derniers connectés
+#paramétrage d'un laucher unity par défaut : nautilus, firefox, libreoffice, calculatrice, editeur de texte et capture d'ecran
+########################################################################
+echo "
+[com.canonical.indicator.session]
+  user-show-menu=false
+[org.gnome.desktop.lockdown]
+  disable-user-switching=true
+  disable-lock-screen=true
+[com.canonical.Unity.Launcher]
+  favorites=[ 'nautilus-home.desktop', 'firefox.desktop','libreoffice-startcenter.desktop','gcalctool.desktop','gedit.desktop','gnome-screenshot.desktop' ]
+" > /usr/share/glib-2.0/schemas/my-defaults.gschema.override
+glib-compile-schemas /usr/share/glib-2.0/schemas
+
+########################################################################
+#paramétrage de Firefox
+########################################################################
+echo "pref(\"general.config.obscure_value\", 0);
+pref(\"general.config.filename\", \"firefox.cfg\");" > /etc/firefox/syspref.js
+
+echo "// Lock specific preferences in Firefox so that users cannot edit them
+lockPref(\"network.proxy.type\", 1);
+lockPref(\"network.proxy.http\", \"$ipproxy\");
+lockPref(\"network.proxy.http_port\", $portproxy);
+lockPref(\"network.proxy.share_proxy_settings\", true) ;
+lockPref(\"network.proxy.no_proxies_on\", \"$exclusionsproxy\") ;
+lockPref(\"browser.startup.page\", 1) ;
+lockPref(\"browser.startup.homepage\", \"$pagedemarrage\");" > /usr/lib/firefox/firefox.cfg
+
+########################################################################
+#suppression de l'envoi des rapport d'erreurs
+########################################################################
+echo "enabled=0" >/etc/default/apport
 
 #supression de l'applet fast-user-switch-applet
 #gconftool --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --type bool --set '/desktop/gnome/lockdown/disable_user_switching' true
-gconftool --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --type list --list-type=string --set '/apps/panel/default_setup/general/applet_id_list' '[clock,notification_area,show_desktop_button,window_list,workspace_switcher,trashapplet]'
+#gconftool --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --type list --list-type=string --set '/apps/panel/default_setup/general/applet_id_list' '[clock,notification_area,show_desktop_button,window_list,workspace_switcher,trashapplet]'
 
+########################################################################
+#suppression de l'applet network-manager
+########################################################################
 sed -i "s/X-GNOME-Autostart-enabled=true/X-GNOME-Autostart-enabled=false/g" /etc/xdg/autostart/nm-applet.desktop
 
 echo "reboot necessaire"
