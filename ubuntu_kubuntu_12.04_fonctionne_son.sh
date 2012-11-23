@@ -79,12 +79,18 @@ export DEBIAN_PRIORITY="high"
 #parametrage du script de demontage du netlogon pour lightdm
 ########################################################################
 touch /etc/lightdm/logonscript.sh
-grep "if mount | grep -q \"/tmp/netlogon\" ; then umount /tmp/netlogon ;fi"  /etc/lightdm/logonscript.sh  >/dev/null; if [ $? == 0 ];then echo "Presession Ok"; else echo  "if mount | grep -q \"/tmp/netlogon\" ; then umount /tmp/netlogon ;fi" >> /etc/lightdm/logonscript.sh;fi
+grep "if mount | grep -q \"/tmp/netlogon\" ; then umount /tmp/netlogon ;fi" /etc/lightdm/logonscript.sh >/dev/null
+if [ $? == 0 ]
+then
+  echo "Presession Ok"
+else
+  echo "if mount | grep -q \"/tmp/netlogon\" ; then umount /tmp/netlogon ;fi" >> /etc/lightdm/logonscript.sh
+fi
 chmod +x /etc/lightdm/logonscript.sh
 
 touch /etc/lightdm/logoffscript.sh
-echo "sleep 2
-umount -f /tmp/netlogon 
+echo "sleep 2 \
+umount -f /tmp/netlogon \ 
 umount -f \$HOME
 " > /etc/lightdm/logoffscript.sh
 chmod +x /etc/lightdm/logoffscript.sh
@@ -98,18 +104,52 @@ echo "GVFS_DISABLE_FUSE=1" >> /etc/environment
 homes="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" ssh=\"0\" path=\"perso\" mountpoint=\"~\" sgrp=\"DomainUsers\" />"
 netlogon="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" path=\"netlogon\" mountpoint=\"/tmp/netlogon\"  sgrp=\"DomainUsers\" />"
 eclairng="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" path=\"eclairng\" mountpoint=\"/media/Partages Scribe\" sgrp=\"DomainUsers\" />"
-grep "/media/Partages Scribe" /etc/security/pam_mount.conf.xml  >/dev/null; if [ $? != 0 ];then sed -i "/<\!-- Volume definitions -->/a\ $eclairng" /etc/security/pam_mount.conf.xml; else echo "eclairng deja present";fi
-grep "mountpoint=\"~\"" /etc/security/pam_mount.conf.xml  >/dev/null; if [ $? != 0 ];then sed -i "/<\!-- Volume definitions -->/a\ $homes" /etc/security/pam_mount.conf.xml; else echo "homes deja present";fi
-grep "/tmp/netlogon" /etc/security/pam_mount.conf.xml  >/dev/null; if [ $? != 0 ];then sed -i "/<\!-- Volume definitions -->/a\ $netlogon" /etc/security/pam_mount.conf.xml; else echo "netlogon deja present";fi
+
+grep "/media/Partages Scribe" /etc/security/pam_mount.conf.xml  >/dev/null
+if [ $? != 0 ]
+then
+  sed -i "/<\!-- Volume definitions -->/a\ $eclairng" /etc/security/pam_mount.conf.xml
+else
+  echo "eclairng deja present"
+fi
+
+grep "mountpoint=\"~\"" /etc/security/pam_mount.conf.xml  >/dev/null
+if [ $? != 0 ]
+then
+  sed -i "/<\!-- Volume definitions -->/a\ $homes" /etc/security/pam_mount.conf.xml
+else
+  echo "homes deja present"
+fi
+
+grep "/tmp/netlogon" /etc/security/pam_mount.conf.xml  >/dev/null
+if [ $? != 0 ]
+then
+  sed -i "/<\!-- Volume definitions -->/a\ $netlogon" /etc/security/pam_mount.conf.xml
+else
+  echo "netlogon deja present"
+fi
 
 ########################################################################
 #nosuid,nodev,loop,encryption,fsck,nonempty,allow_root,allow_other
 #options de montages
 ########################################################################
 mntoptions="<cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>"
-grep "<cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>" /etc/security/pam_mount.conf.xml  >/dev/null; if [ $? != 0 ];then sed -i "/<\!-- pam_mount parameters: Volume-related -->/a\ <cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>" /etc/security/pam_mount.conf.xml; else echo "mount.cifs deja present";fi
 
-grep "umount //$ipscribe/perso"  /etc/security/pam_mount.conf.xml  >/dev/null; if [ $? != 0 ];then sed -i "/<mkmountpoint enable=\"1\" remove=\"true\" \/>/a\ <umount> umount \/\/$ipscribe\/perso<\/umount><umount>umount \/\/$ipscribe\/netlogon<\/umount><umount>umount \/\/$ipscribe\/eclairng <\/umount>" /etc/security/pam_mount.conf.xml; else echo "unmount perso deja present";fi
+grep "<cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>" /etc/security/pam_mount.conf.xml  >/dev/null
+if [ $? != 0 ]
+then
+  sed -i "/<\!-- pam_mount parameters: Volume-related -->/a\ <cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>" /etc/security/pam_mount.conf.xml
+else
+  echo "mount.cifs deja present"
+fi
+
+grep "umount //$ipscribe/perso"  /etc/security/pam_mount.conf.xml  >/dev/null
+if [ $? != 0 ]
+then
+  sed -i "/<mkmountpoint enable=\"1\" remove=\"true\" \/>/a\ <umount> umount \/\/$ipscribe\/perso<\/umount><umount>umount \/\/$ipscribe\/netlogon<\/umount><umount>umount \/\/$ipscribe\/eclairng <\/umount>" /etc/security/pam_mount.conf.xml
+else
+  echo "unmount perso deja present"
+fi
 
 #/etc/profile
 echo "
@@ -127,15 +167,16 @@ grep "%DomainAdmins ALL=(ALL) ALL" /etc/sudoers > /dev/null; if [ $?!=0 ];then s
 #parametrage du lightdm.conf
 #activation du pave numerique par greeter-setup-script=/usr/bin/numlockx on
 ########################################################################
-echo "[SeatDefaults]
-    user-session=ubuntu
-    greeter-session=unity-greeter
-    allow-guest=false
-    greeter-show-manual-login=true
-    greeter-hide-users=true
-    session-setup-script=/etc/lightdm/logonscript.sh
-    session-cleanup-script=/etc/lightdm/logoffscript.sh" > /etc/lightdm/lightdm.conf
-
+echo "
+[SeatDefaults]
+  user-session=ubuntu
+  greeter-session=unity-greeter
+  allow-guest=false
+  greeter-show-manual-login=true
+  greeter-hide-users=true
+  session-setup-script=/etc/lightdm/logonscript.sh
+  session-cleanup-script=/etc/lightdm/logoffscript.sh
+" > /etc/lightdm/lightdm.conf
 
 #/etc/security/group.conf
 grep "*;*;*;Al0000-2400;floppy,audio,cdrom,video,plugdev,scanner" /etc/security/group.conf  >/dev/null; if [ $? != 0 ];then echo "*;*;*;Al0000-2400;floppy,audio,cdrom,video,plugdev,scanner" >> /etc/security/group.conf; else echo "group.conf ok";fi
