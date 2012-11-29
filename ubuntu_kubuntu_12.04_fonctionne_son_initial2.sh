@@ -1,10 +1,14 @@
 #!/bin/bash
 #Christophe Deze - Rectorat de Nantes
-#script d'integration de station ubuntu 10.10 sur un scribe NG
-#testé avec Scribe 2.2.2
-#
-# version 1.0.1
-# Run as root, of course.
+#Cédric Frayssinet - Mission Tice Ac-lyon
+#Xavier GAREL - Mission Tice Ac-lyon
+#############################################
+#Script d'integration de station ubuntu 12.04 sur un scribe 2.x
+#testé avec Scribe 2.3
+#############################################
+# version 1.1
+# Run using sudo, of course.
+#############################################
 if [ "$UID" -ne "0" ]
 then
   echo "Il faut etre root pour executer ce script. ==> sudo "
