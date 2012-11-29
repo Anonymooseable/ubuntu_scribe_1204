@@ -130,12 +130,15 @@ fi
 #nosuid,nodev,loop,encryption,fsck,nonempty,allow_root,allow_other
 #options de montages
 ########################################################################
+addmountoptions="noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8"
 mntoptions="<cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>"
 
-grep "<cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>" /etc/security/pam_mount.conf.xml >/dev/null
+mntoptions="<cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o "$addmountoptions,user=%(USER),uid=%(USERUID),gid=%(USERGID)%(before=\\",\\" OPTIONS)\"</cifsmount>"
+
+grep "<cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o "$addmountoptions,user=%(USER),uid=%(USERUID),gid=%(USERGID)%(before=\\",\\" OPTIONS)\"</cifsmount>" /etc/security/pam_mount.conf.xml
 if [ $? != 0 ]
 then
-  sed -i "/<\!-- pam_mount parameters: Volume-related -->/a\ <cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>" /etc/security/pam_mount.conf.xml
+  sed -i "/<\!-- pam_mount parameters: Volume-related -->/a\ <cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o "$addmountoptions,user=%(USER),uid=%(USERUID),gid=%(USERGID)%(before=\\",\\" OPTIONS)\"</cifsmount>" /etc/security/pam_mount.conf.xml
 else
   echo "mount.cifs deja present"
 fi
