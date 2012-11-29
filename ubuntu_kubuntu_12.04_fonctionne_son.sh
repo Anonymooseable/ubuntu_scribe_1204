@@ -18,7 +18,7 @@ then
 fi
 
 
-ipscribepardefaut="192.168.0.99"
+ipscribepardefaut="172.16.0.241"
 ipscribe=""
 #export http_proxy=""
 echo "Donnez l'ip du scribe par défaut : $ipscribepardefaut "
@@ -47,8 +47,6 @@ host $ipscribe
 base o=gouv, c=fr
 nss_override_attribute_value shadowMax 999
 " > /etc/ldap.conf
-
-
 
 #auth ldap
 echo "[open_ldap]
@@ -134,10 +132,10 @@ fi
 ########################################################################
 mntoptions="<cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>"
 
-grep $mntoptions /etc/security/pam_mount.conf.xml  >/dev/null
+grep "<cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>" /etc/security/pam_mount.conf.xml >/dev/null
 if [ $? != 0 ]
 then
-  sed -i "/<\!-- pam_mount parameters: Volume-related -->/a\ $mntoptions" /etc/security/pam_mount.conf.xml
+  sed -i "/<\!-- pam_mount parameters: Volume-related -->/a\ <cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>" /etc/security/pam_mount.conf.xml
 else
   echo "mount.cifs deja present"
 fi
