@@ -7,6 +7,20 @@
 #testé avec Scribe 2.3
 #############################################
 # version 1.1
+
+
+
+########################################################################
+#paramétrage par défaut
+#changez les valeurs, ainsi, il suffira de taper 'entrée' à chaque question
+########################################################################
+ipscribepardefaut="172.16.0.241"
+ipproxypardefaut="172.16.0.252"
+portproxypardefaut="3128"
+pagedemarragepardefaut="http://www2.ac-lyon.fr/serv_ress/mission_tice/wiki/"
+exclusionsproxypardefaut="127.0.0.1, localhost"
+
+#############################################
 # Run using sudo, of course.
 #############################################
 if [ "$UID" -ne "0" ]
@@ -14,20 +28,22 @@ then
   echo "Il faut etre root pour executer ce script. ==> sudo "
   exit 
 fi 
+
+########################################################################
+#vérification de la bonne version d'Ubuntu
+########################################################################
 . /etc/lsb-release
 if [ "$DISTRIB_RELEASE" != "12.04" ]
-then 
-	echo " pas ubuntu 12.04"
-	exit
+then
+  echo " pas ubuntu 12.04"
+  exit
 fi
 
-
-ipscribepardefaut="172.16.0.241"
-ipscribe=""
-#export http_proxy=""
+##############################################################################
+### Questionnaire : IP du scribe, proxy firefox, port proxy, exception proxy #
+##############################################################################
 echo "Donnez l'ip du scribe par défaut : $ipscribepardefaut "
 read ipscribe
-
 if [ "$ipscribe" == "" ]
 then
  echo "ip non renseignée"
@@ -35,12 +51,30 @@ then
 fi
 echo "scribe = "$ipscribe
 
+########################################################################
 #rendre debconf silencieux
+########################################################################
 export DEBIAN_FRONTEND="noninteractive"
 export DEBIAN_PRIORITY="critical"
+
+########################################################################
+#Mettre la station à l'heure à partir du serveur Scribe
+########################################################################
+ntpdate $ipscribe
+
+########################################################################
 #installation des paquets necessaires
+#numlockx pour le verrouillage du pave numerique
+#unattended-upgrades pour forcer les mises à jour de sécurité à se faire
+########################################################################
 apt-get update
-apt-get install -y ldap-auth-client libpam-mount smbfs nscd numlockx
+apt-get install -y ldap-auth-client libpam-mount smbfs nscd numlockx unattended-upgrades
+
+########################################################################
+# activation auto des mises à jour de sécu
+########################################################################
+echo "APT::Periodic::Update-Package-Lists \"1\";
+APT::Periodic::Unattended-Upgrade \"1\";" > /etc/apt/apt.conf.d/20auto-upgrades
 
 ########################################################################
 # Configuration du fichier pour le LDAP /etc/ldap.conf
@@ -85,10 +119,15 @@ Default: yes
 Priority: 128
 Session-Type: Additional
 Session:
-       optional                        pam_mkhomedir.so silent
-" > /usr/share/pam-configs/mkhomedir
+       optional                        pam_mkhomedir.so silent" > /usr/share/pam-configs/mkhomedir
 
-grep "auth    required     pam_group.so use_first_pass"  /etc/pam.d/common-auth  >/dev/null; if [ $? == 0 ];then echo "/etc/pam.d/common-auth Ok"; else echo  "auth    required     pam_group.so use_first_pass" >> /etc/pam.d/common-auth;fi
+grep "auth    required     pam_group.so use_first_pass"  /etc/pam.d/common-auth  >/dev/null
+if [ $? == 0 ]
+then
+  echo "/etc/pam.d/common-auth Ok"
+else
+  echo  "auth    required     pam_group.so use_first_pass" >> /etc/pam.d/common-auth
+fi
 
 ########################################################################
 # mise en place de la conf pam.d
@@ -205,9 +244,19 @@ echo "[SeatDefaults]
     session-cleanup-script=/etc/lightdm/logoffscript.sh
     greeter-setup-script=/usr/bin/numlockx on" > /etc/lightdm/lightdm.conf
 
-#supression de l'applet fast-user-switch-applet
-#gconftool --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --type bool --set '/desktop/gnome/lockdown/disable_user_switching' true
-gconftool --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory --type list --list-type=string --set '/apps/panel/default_setup/general/applet_id_list' '[clock,notification_area,show_desktop_button,window_list,workspace_switcher,trashapplet]'
+########################################################################
+#supression de l'applet switch-user pour ne pas voir les derniers connectés
+#paramétrage d'un laucher unity par défaut : nautilus, firefox, libreoffice, calculatrice, editeur de texte et capture d'ecran
+########################################################################
+echo "[com.canonical.indicator.session]
+user-show-menu=false
+[org.gnome.desktop.lockdown]
+disable-user-switching=true
+disable-lock-screen=true
+[com.canonical.Unity.Launcher]
+favorites=[ 'nautilus-home.desktop', 'firefox.desktop','libreoffice-startcenter.desktop', 'gcalctool.desktop','gedit.desktop','gnome-screenshot.desktop' ]
+" > /usr/share/glib-2.0/schemas/my-defaults.gschema.override
+glib-compile-schemas /usr/share/glib-2.0/schemas
 
 ########################################################################
 #suppression de l'envoi des rapport d'erreurs
@@ -219,5 +268,19 @@ echo "enabled=0" >/etc/default/apport
 ########################################################################
 sed -i "s/X-GNOME-Autostart-enabled=true/X-GNOME-Autostart-enabled=false/g" /etc/xdg/autostart/nm-applet.desktop
 
-echo "reboot necessaire"
+########################################################################
+#suppression du menu messages
+########################################################################
+apt-get remove indicator-messages -y
+
+########################################################################
+#nettoyage station avant clonage
+########################################################################
+apt-get autoclean
+apt-get autoremove --purge
+
+########################################################################
+#FIN
+########################################################################
+echo "C'est fini ! Reboot nécessaire..."
 
