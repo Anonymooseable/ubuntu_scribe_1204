@@ -78,20 +78,56 @@ export DEBIAN_PRIORITY="high"
 touch /etc/lightdm/script.sh
 
 #umount /media/netlogon dans  /etc/gdm/PreSession/Default (pour creer partage groupes)
-grep "if mount | grep -q \"/media/netlogon\" ; then umount /media/netlogon ;fi"  /etc/lightdm/script.sh  >/dev/null; if [ $? == 0 ];then echo "Presession Ok"; else echo  "if mount | grep -q \"/media/netlogon\" ; then umount /media/netlogon ;fi" >> /etc/lightdm/script.sh;fi
+grep "if mount | grep -q \"/media/netlogon\" ; then umount /media/netlogon ;fi" /etc/lightdm/script.sh  >/dev/null
+if [ $? == 0 ]
+then
+  echo "Presession Ok"
+else
+  echo "if mount | grep -q \"/media/netlogon\" ; then umount /media/netlogon ;fi" >> /etc/lightdm/script.sh
+fi
 chmod +x /etc/lightdm/script.sh
 
-professeurs="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" path=\"professeurs\" mountpoint=\"/media/professeurs\" />"
-homes="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" path=\"perso\" mountpoint=\"~/Documents\" />"
-netlogon="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" path=\"netlogon\" mountpoint=\"/media/netlogon\" />"
 eclairng="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" path=\"eclairng\" mountpoint=\"/media/serveur\" />"
-grep "/media/serveur" /etc/security/pam_mount.conf.xml  >/dev/null; if [ $? != 0 ];then sed -i "/<\!-- Volume definitions -->/a\ $eclairng" /etc/security/pam_mount.conf.xml; else echo "eclairng deja present";fi
-grep "mountpoint=\"~\"" /etc/security/pam_mount.conf.xml  >/dev/null; if [ $? != 0 ];then sed -i "/<\!-- Volume definitions -->/a\ $homes" /etc/security/pam_mount.conf.xml; else echo "homes deja present";fi
-grep "/media/netlogon" /etc/security/pam_mount.conf.xml  >/dev/null; if [ $? != 0 ];then sed -i "/<\!-- Volume definitions -->/a\ $netlogon" /etc/security/pam_mount.conf.xml; else echo "netlogon deja present";fi
-grep "/media/professeurs" /etc/security/pam_mount.conf.xml  >/dev/null; if [ $? != 0 ];then sed -i "/<\!-- Volume definitions -->/a\ $professeurs" /etc/security/pam_mount.conf.xml; else echo "professeurs deja present" ;fi
+grep "/media/serveur" /etc/security/pam_mount.conf.xml  >/dev/null
+if [ $? != 0 ]
+then
+  sed -i "/<\!-- Volume definitions -->/a\ $eclairng" /etc/security/pam_mount.conf.xml
+else
+  echo "eclairng deja present"
+fi
 
-grep "<cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>" /etc/security/pam_mount.conf.xml  >/dev/null; if [ $? != 0 ];then sed -i "/<\!-- pam_mount parameters: Volume-related -->/a\ <cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>" /etc/security/pam_mount.conf.xml; else echo "mount.cifs deja present";fi
+homes="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" path=\"perso\" mountpoint=\"~/Documents\" />"
+grep "mountpoint=\"~\"" /etc/security/pam_mount.conf.xml  >/dev/null
+if [ $? != 0 ]
+then sed -i "/<\!-- Volume definitions -->/a\ $homes" /etc/security/pam_mount.conf.xml
+else
+  echo "homes deja present"
+fi
 
+netlogon="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" path=\"netlogon\" mountpoint=\"/media/netlogon\" />"
+grep "/media/netlogon" /etc/security/pam_mount.conf.xml  >/dev/null
+if [ $? != 0 ]
+then sed -i "/<\!-- Volume definitions -->/a\ $netlogon" /etc/security/pam_mount.conf.xml
+else
+  echo "netlogon deja present"
+fi
+
+professeurs="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" path=\"professeurs\" mountpoint=\"/media/professeurs\" />"
+grep "/media/professeurs" /etc/security/pam_mount.conf.xml  >/dev/null
+if [ $? != 0 ]
+then
+  sed -i "/<\!-- Volume definitions -->/a\ $professeurs" /etc/security/pam_mount.conf.xml
+else
+  echo "professeurs deja present"
+fi
+
+grep "<cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>" /etc/security/pam_mount.conf.xml  >/dev/null
+if [ $? != 0 ]
+then
+  sed -i "/<\!-- pam_mount parameters: Volume-related -->/a\ <cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>" /etc/security/pam_mount.conf.xml
+else
+  echo "mount.cifs deja present"
+fi
 
 #/etc/profile
 echo "
@@ -125,3 +161,4 @@ gconftool --direct --config-source xml:readwrite:/etc/gconf/gconf.xml.mandatory 
 sed -i "s/X-GNOME-Autostart-enabled=true/X-GNOME-Autostart-enabled=false/g" /etc/xdg/autostart/nm-applet.desktop
 
 echo "reboot necessaire"
+

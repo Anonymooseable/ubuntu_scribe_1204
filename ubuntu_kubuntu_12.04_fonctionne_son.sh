@@ -101,10 +101,7 @@ echo "GVFS_DISABLE_FUSE=1" >> /etc/environment
 #Paramétrage pour remplir pam_mount.conf
 ########################################################################
 
-homes="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" ssh=\"0\" path=\"perso\" mountpoint=\"~\" sgrp=\"DomainUsers\" />"
-netlogon="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" path=\"netlogon\" mountpoint=\"/tmp/netlogon\"  sgrp=\"DomainUsers\" />"
 eclairng="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" path=\"eclairng\" mountpoint=\"/media/Partages Scribe\" sgrp=\"DomainUsers\" />"
-
 grep "/media/Partages Scribe" /etc/security/pam_mount.conf.xml  >/dev/null
 if [ $? != 0 ]
 then
@@ -113,6 +110,7 @@ else
   echo "eclairng deja present"
 fi
 
+homes="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" ssh=\"0\" path=\"perso\" mountpoint=\"~/Documents\" sgrp=\"DomainUsers\" />"
 grep "mountpoint=\"~\"" /etc/security/pam_mount.conf.xml  >/dev/null
 if [ $? != 0 ]
 then
@@ -121,6 +119,7 @@ else
   echo "homes deja present"
 fi
 
+netlogon="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" path=\"netlogon\" mountpoint=\"/tmp/netlogon\"  sgrp=\"DomainUsers\" />"
 grep "/tmp/netlogon" /etc/security/pam_mount.conf.xml  >/dev/null
 if [ $? != 0 ]
 then
@@ -135,10 +134,10 @@ fi
 ########################################################################
 mntoptions="<cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>"
 
-grep "<cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>" /etc/security/pam_mount.conf.xml  >/dev/null
+grep $mntoptions /etc/security/pam_mount.conf.xml  >/dev/null
 if [ $? != 0 ]
 then
-  sed -i "/<\!-- pam_mount parameters: Volume-related -->/a\ <cifsmount>mount -t cifs //%(SERVER)/%(VOLUME) %(MNTPT) -o \"noexec,nosetuids,mapchars,cifsacl,serverino,nobrl,iocharset=utf8,user=%(USER),uid=%(USERUID)%(before=\\",\\" OPTIONS)\"</cifsmount>" /etc/security/pam_mount.conf.xml
+  sed -i "/<\!-- pam_mount parameters: Volume-related -->/a\ $mntoptions" /etc/security/pam_mount.conf.xml
 else
   echo "mount.cifs deja present"
 fi
