@@ -7,8 +7,8 @@ avec la solution libre OSCAR : http://oscar.crdp-lyon.fr/wiki/
 
 Télécharger et exécuter le script via la commande :
 
-wget https://github.com/bristow/ubuntu_scribe_1204/raw/master/ubuntu-12.04_unity.sh
+wget https://github.com/bristow/ubuntu_scribe_1204/raw/master/client_scribe_12.04.sh
 
-chmod +x ubuntu-12.04_unity.sh
+chmod +x client_scribe_12.04.sh
 
-sudo ./ubuntu-12.04_unity.sh
+sudo ./client_scribe_12.04.sh
