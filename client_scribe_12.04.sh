@@ -256,6 +256,22 @@ disable-lock-screen=true
 [com.canonical.Unity.Launcher]
 favorites=[ 'nautilus-home.desktop', 'firefox.desktop','libreoffice-startcenter.desktop', 'gcalctool.desktop','gedit.desktop','gnome-screenshot.desktop' ]
 " > /usr/share/glib-2.0/schemas/my-defaults.gschema.override
+
+########################################################################
+#Paramétrage des paramètres Proxy pour Gnome
+########################################################################
+echo "[org.gnome.system.proxy]
+mode='manual'
+use-same-proxy=true
+ignore-hosts=[ 'localhost', '127.0.0.0/8', '192.168.0.0/24' ]
+[org.gnome.system.proxy.http]
+host='172.16.0.252'
+port=3128
+[org.gnome.system.proxy.https]
+host='172.16.0.252'
+port=3128
+" >> /usr/share/glib-2.0/schemas/my-defaults.gschema.override
+
 glib-compile-schemas /usr/share/glib-2.0/schemas
 
 ########################################################################
