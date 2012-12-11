@@ -8,10 +8,10 @@
 #############################################
 # version 1.1
 
-########################################################################
-#paramétrage par défaut
-#changez les valeurs, ainsi, il suffira de taper 'entrée' à chaque question
-########################################################################
+###########################################################################
+#Paramétrage par défaut
+#Changez les valeurs, ainsi, il suffira de taper 'entrée' à chaque question
+###########################################################################
 scribe_def_ip="172.16.0.241"
 proxy_def_ip="172.16.0.252"
 proxy_def_port="3128"
