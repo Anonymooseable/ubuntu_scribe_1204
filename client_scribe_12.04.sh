@@ -15,10 +15,11 @@
 #changez les valeurs, ainsi, il suffira de taper 'entrée' à chaque question
 ########################################################################
 ipscribepardefaut="172.16.0.241"
-ipproxypardefaut="172.16.0.252"
-portproxypardefaut="3128"
+proxy_def_ip="172.16.0.252"
+proxy_def_port="3128"
 pagedemarragepardefaut="http://www2.ac-lyon.fr/serv_ress/mission_tice/wiki/"
-exclusionsproxypardefaut="127.0.0.1, localhost"
+proxy_def_exclusion1="172.16.0.0/16"
+proxy_def_exclusion2="192.168.0.0/16"
 
 #############################################
 # Run using sudo, of course.
@@ -50,6 +51,25 @@ then
  ipscribe=$ipscribepardefaut
 fi
 echo "scribe = "$ipscribe
+
+#####################################
+# Existe-t-il un proxy à paramétrer ?
+#####################################
+
+read -p "Faut-il enregistrer l'utilisation d'un proxy ? [O/n] " rep_proxy
+if ( [[ $rep_proxy = "O" ]] || [[ $rep_proxy = "o" ]] || [[ $rep_proxy = "" ]] ); then
+  read -p "Donnez l'adresse ip du proxy ? [$proxy_def_ip] " ip_proxy
+  if [[ $ip_proxy = "" ]]; then
+    ip_proxy=$proxy_def_ip
+  fi
+  read -p "Donnez le n° port du proxy ? [$proxy_def_port] " port_proxy
+  if [[ $port_proxy = "" ]]; then
+    port_proxy=$proxy_def_port
+  fi
+else
+  ip_proxy=""
+  port_proxy=""
+fi
 
 ########################################################################
 #rendre debconf silencieux
@@ -257,22 +277,45 @@ disable-lock-screen=true
 favorites=[ 'nautilus-home.desktop', 'firefox.desktop','libreoffice-startcenter.desktop', 'gcalctool.desktop','gedit.desktop','gnome-screenshot.desktop' ]
 " > /usr/share/glib-2.0/schemas/my-defaults.gschema.override
 
-########################################################################
+#######################################################
+#Paramétrage des paramètres Proxy pour tout le système
+#######################################################
+if ( [[ $ip_proxy = "" ]] || [[ $port_proxy = "" ]] ); then
+
 #Paramétrage des paramètres Proxy pour Gnome
-########################################################################
-echo "[org.gnome.system.proxy]
+#######################################################
+  echo "[org.gnome.system.proxy]
 mode='manual'
 use-same-proxy=true
-ignore-hosts=[ 'localhost', '127.0.0.0/8', '192.168.0.0/24' ]
+ignore-hosts=[ 'localhost', '127.0.0.0/8', '$proxy_def_exclusion1', '$proxy_def_exclusion2' ]
 [org.gnome.system.proxy.http]
-host='172.16.0.252'
-port=3128
+host='$ip_proxy'
+port=$port_proxy
 [org.gnome.system.proxy.https]
-host='172.16.0.252'
-port=3128
+host='$ip_proxy'
+port=$port_proxy
 " >> /usr/share/glib-2.0/schemas/my-defaults.gschema.override
 
-glib-compile-schemas /usr/share/glib-2.0/schemas
+  glib-compile-schemas /usr/share/glib-2.0/schemas
+
+#Paramétrage du Proxy pour le systeme
+######################################################################
+echo "http_proxy=http://$ip_proxy:$port_proxy/
+https_proxy=http://$ip_proxy:$port_proxy/
+ftp_proxy=http://$ip_proxy:$port_proxy/
+no_proxy=\"localhost,127.0.0.1,localaddress,.localdomain.com\"" >> /etc/environment
+
+#Paramétrage du Proxy pour apt
+######################################################################
+echo "Acquire::http::proxy \"http://$ip_proxy:$port_proxy/\";
+Acquire::ftp::proxy \"ftp://$ip_proxy:$port_proxy/\";
+Acquire::https::proxy \"https://$ip_proxy:$port_proxy/\";" > /etc/apt/apt.conf
+
+#Permettre d'utiliser la commande add-apt-repository derriere un Proxy
+######################################################################
+echo "Defaults env_keep = https_proxy" >> /etc/sudoers
+
+fi
 
 ########################################################################
 #suppression de l'envoi des rapport d'erreurs
