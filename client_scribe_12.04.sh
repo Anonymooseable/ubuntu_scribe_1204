@@ -18,7 +18,7 @@ ipscribepardefaut="172.16.0.241"
 proxy_def_ip="172.16.0.252"
 proxy_def_port="3128"
 pagedemarragepardefaut="http://www2.ac-lyon.fr/serv_ress/mission_tice/wiki/"
-proxy_gnome_noproxy="[ 'localhost', '127.0.0.0/8', '172.16.0.0/16', '192.168.0.0/16' ]"
+proxy_gnome_noproxy="[ 'localhost', '127.0.0.0/8', '172.16.0.0/16', '192.168.0.0/16', '*.crdp-lyon.fr', '*.crdplyon.lan' ]"
 proxy_env_noproxy="localhost,127.0.0.1,192.168.0.0/16,172.16.0.0/16,.crdp-lyon.fr,.crdplyon.lan"
 
 #############################################
@@ -245,6 +245,7 @@ sed -i "s/enabled=True/enabled=False/g" /etc/xdg/user-dirs.conf
 grep "%professeurs ALL=(ALL) ALL" /etc/sudoers > /dev/null
 if [ $?!=0 ]
 then
+  sed -i "/%admin ALL=(ALL) ALL/a\%professeurs ALL=(ALL) ALL" /etc/sudoers
   sed -i "/%admin ALL=(ALL) ALL/a\%DomainAdmins ALL=(ALL) ALL" /etc/sudoers
 else
   echo "prof deja dans sudo"
