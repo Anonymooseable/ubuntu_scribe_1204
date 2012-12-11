@@ -282,6 +282,8 @@ favorites=[ 'nautilus-home.desktop', 'firefox.desktop','libreoffice-startcenter.
 #######################################################
 if  [ "$ip_proxy" != "" ] || [ $port_proxy != "" ] ; then
 
+  echo "Paramétrage du proxy $ip_proxy:$port_proxy" 
+
 #Paramétrage des paramètres Proxy pour Gnome
 #######################################################
   echo "[org.gnome.system.proxy]
