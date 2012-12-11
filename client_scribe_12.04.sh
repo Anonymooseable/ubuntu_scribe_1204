@@ -18,8 +18,8 @@ ipscribepardefaut="172.16.0.241"
 proxy_def_ip="172.16.0.252"
 proxy_def_port="3128"
 pagedemarragepardefaut="http://www2.ac-lyon.fr/serv_ress/mission_tice/wiki/"
-proxy_def_exclusion1="172.16.0.0/16"
-proxy_def_exclusion2="192.168.0.0/16"
+proxy_gnome_noproxy="[ 'localhost', '127.0.0.0/8', '172.16.0.0/16', '192.168.0.0/16' ]"
+proxy_env_noproxy="localhost,127.0.0.1,192.168.0.0/16,172.16.0.0/16,.crdp-lyon.fr,.crdplyon.lan"
 
 #############################################
 # Run using sudo, of course.
@@ -287,7 +287,7 @@ if ( [[ $ip_proxy = "" ]] || [[ $port_proxy = "" ]] ); then
   echo "[org.gnome.system.proxy]
 mode='manual'
 use-same-proxy=true
-ignore-hosts=[ 'localhost', '127.0.0.0/8', '$proxy_def_exclusion1', '$proxy_def_exclusion2' ]
+ignore-hosts=$proxy_gnome_noproxy
 [org.gnome.system.proxy.http]
 host='$ip_proxy'
 port=$port_proxy
@@ -303,7 +303,7 @@ port=$port_proxy
 echo "http_proxy=http://$ip_proxy:$port_proxy/
 https_proxy=http://$ip_proxy:$port_proxy/
 ftp_proxy=http://$ip_proxy:$port_proxy/
-no_proxy=\"localhost,127.0.0.1,localaddress,.localdomain.com\"" >> /etc/environment
+no_proxy=\"$proxy_env_noproxy\"" >> /etc/environment
 
 #Paramétrage du Proxy pour apt
 ######################################################################
