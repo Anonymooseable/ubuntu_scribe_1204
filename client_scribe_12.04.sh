@@ -8,18 +8,16 @@
 #############################################
 # version 1.1
 
-
-
 ########################################################################
 #paramétrage par défaut
 #changez les valeurs, ainsi, il suffira de taper 'entrée' à chaque question
 ########################################################################
-ipscribepardefaut="172.16.0.241"
+scribe_def_ip="172.16.0.241"
 proxy_def_ip="172.16.0.252"
 proxy_def_port="3128"
-pagedemarragepardefaut="http://www2.ac-lyon.fr/serv_ress/mission_tice/wiki/"
 proxy_gnome_noproxy="[ 'localhost', '127.0.0.0/8', '172.16.0.0/16', '192.168.0.0/16', '*.crdp-lyon.fr', '*.crdplyon.lan' ]"
 proxy_env_noproxy="localhost,127.0.0.1,192.168.0.0/16,172.16.0.0/16,.crdp-lyon.fr,.crdplyon.lan"
+pagedemarragepardefaut="http://www2.ac-lyon.fr/serv_ress/mission_tice/wiki/"
 
 #############################################
 # Run using sudo, of course.
@@ -43,14 +41,11 @@ fi
 ##############################################################################
 ### Questionnaire : IP du scribe, proxy firefox, port proxy, exception proxy #
 ##############################################################################
-echo "Donnez l'ip du scribe par défaut : $ipscribepardefaut "
-read ipscribe
-if [ "$ipscribe" == "" ]
-then
- echo "ip non renseignée"
- ipscribe=$ipscribepardefaut
+read -p "Donnez l'ip du serveur Scribe ? [$scribe_def_ip] " ip_scribe
+if [ "$ip_scribe" == "" ] ; then
+ ip_scribe=$scribe_def_ip
 fi
-echo "scribe = $ipscribe"
+echo "Adresse du serveur Scribe = $ip_scribe"
 
 #####################################
 # Existe-t-il un proxy à paramétrer ?
@@ -80,7 +75,7 @@ export DEBIAN_PRIORITY="critical"
 ########################################################################
 #Mettre la station à l'heure à partir du serveur Scribe
 ########################################################################
-ntpdate $ipscribe
+ntpdate $ip_scribe
 
 ########################################################################
 #installation des paquets necessaires
@@ -101,7 +96,7 @@ APT::Periodic::Unattended-Upgrade \"1\";" > /etc/apt/apt.conf.d/20auto-upgrades
 ########################################################################
 echo "
 # /etc/ldap.conf
-host $ipscribe
+host $ip_scribe
 base o=gouv, c=fr
 nss_override_attribute_value shadowMax 999
 " > /etc/ldap.conf
@@ -191,7 +186,7 @@ chmod +x /etc/lightdm/logoffscript.sh
 #Paramétrage pour remplir pam_mount.conf
 ########################################################################
 
-eclairng="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" path=\"eclairng\" mountpoint=\"/media/scribe\" />"
+eclairng="<volume user=\"*\" fstype=\"cifs\" server=\"$ip_scribe\" path=\"eclairng\" mountpoint=\"/media/scribe\" />"
 grep "/media/scribe" /etc/security/pam_mount.conf.xml  >/dev/null
 if [ $? != 0 ]
 then
@@ -200,7 +195,7 @@ else
   echo "eclairng deja present"
 fi
 
-homes="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" path=\"perso\" mountpoint=\"~/Documents\" />"
+homes="<volume user=\"*\" fstype=\"cifs\" server=\"$ip_scribe\" path=\"perso\" mountpoint=\"~/Documents\" />"
 grep "mountpoint=\"~\"" /etc/security/pam_mount.conf.xml  >/dev/null
 if [ $? != 0 ]
 then sed -i "/<\!-- Volume definitions -->/a\ $homes" /etc/security/pam_mount.conf.xml
@@ -208,7 +203,7 @@ else
   echo "homes deja present"
 fi
 
-netlogon="<volume user=\"*\" fstype=\"cifs\" server=\"$ipscribe\" path=\"netlogon\" mountpoint=\"/tmp/netlogon\"  sgrp=\"DomainUsers\" />"
+netlogon="<volume user=\"*\" fstype=\"cifs\" server=\"$ip_scribe\" path=\"netlogon\" mountpoint=\"/tmp/netlogon\"  sgrp=\"DomainUsers\" />"
 grep "/tmp/netlogon" /etc/security/pam_mount.conf.xml  >/dev/null
 if [ $? != 0 ]
 then
@@ -338,11 +333,15 @@ apt-get remove indicator-messages -y
 ########################################################################
 #nettoyage station avant clonage
 ########################################################################
-apt-get autoclean
-apt-get autoremove --purge
+apt-get -y autoclean
+apt-get -y autoremove --purge
 
 ########################################################################
 #FIN
 ########################################################################
-echo "C'est fini ! Reboot nécessaire..."
+echo "C'est fini ! Un reboot est nécessaire..."
+read -p "Voulez-vous redémarrer immédiatement ? [O/n] " rep_reboot
+if [ "$rep_reboot" = "O" ] || [ "$rep_reboot" = "o" ] || [ "$rep_reboot" = "" ] ; then
+  reboot
+fi
 
