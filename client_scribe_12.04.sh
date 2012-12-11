@@ -50,20 +50,20 @@ then
  echo "ip non renseignée"
  ipscribe=$ipscribepardefaut
 fi
-echo "scribe = "$ipscribe
+echo "scribe = $ipscribe"
 
 #####################################
 # Existe-t-il un proxy à paramétrer ?
 #####################################
 
 read -p "Faut-il enregistrer l'utilisation d'un proxy ? [O/n] " rep_proxy
-if ( [[ $rep_proxy = "O" ]] || [[ $rep_proxy = "o" ]] || [[ $rep_proxy = "" ]] ); then
+if [ "$rep_proxy" = "O" ] || [ "$rep_proxy" = "o" ] || [ "$rep_proxy" = "" ] ; then
   read -p "Donnez l'adresse ip du proxy ? [$proxy_def_ip] " ip_proxy
-  if [[ $ip_proxy = "" ]]; then
+  if [ "$ip_proxy" = "" ] ; then
     ip_proxy=$proxy_def_ip
   fi
   read -p "Donnez le n° port du proxy ? [$proxy_def_port] " port_proxy
-  if [[ $port_proxy = "" ]]; then
+  if [ "$port_proxy" = "" ] ; then
     port_proxy=$proxy_def_port
   fi
 else
@@ -280,7 +280,7 @@ favorites=[ 'nautilus-home.desktop', 'firefox.desktop','libreoffice-startcenter.
 #######################################################
 #Paramétrage des paramètres Proxy pour tout le système
 #######################################################
-if ( [[ $ip_proxy = "" ]] || [[ $port_proxy = "" ]] ); then
+if  [ "$ip_proxy" != "" ] || [ $port_proxy != "" ] ; then
 
 #Paramétrage des paramètres Proxy pour Gnome
 #######################################################
@@ -309,7 +309,7 @@ no_proxy=\"$proxy_env_noproxy\"" >> /etc/environment
 ######################################################################
 echo "Acquire::http::proxy \"http://$ip_proxy:$port_proxy/\";
 Acquire::ftp::proxy \"ftp://$ip_proxy:$port_proxy/\";
-Acquire::https::proxy \"https://$ip_proxy:$port_proxy/\";" > /etc/apt/apt.conf
+Acquire::https::proxy \"https://$ip_proxy:$port_proxy/\";" > /etc/apt/apt.conf.d/20proxy
 
 #Permettre d'utiliser la commande add-apt-repository derriere un Proxy
 ######################################################################
