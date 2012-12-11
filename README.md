@@ -7,8 +7,11 @@ avec la solution libre OSCAR : http://oscar.crdp-lyon.fr/wiki/
 
 Télécharger et exécuter le script via la commande :
 
-wget https://github.com/bristow/ubuntu_scribe_1204/raw/master/client_scribe_12.04.sh
+wget https://github.com/bristow/ubuntu_scribe_1204/blob/xgl-proxy/client_scribe_12.04.sh
 
 chmod +x client_scribe_12.04.sh
 
 sudo ./client_scribe_12.04.sh
+
+
+Remarque : vous pouvez éditer les valeurs par défaut en début de script afin de les adapter à votre environnement.
