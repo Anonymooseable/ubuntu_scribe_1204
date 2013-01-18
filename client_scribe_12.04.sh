@@ -6,7 +6,7 @@
 #Script d'integration de station ubuntu 12.04 sur un scribe 2.x
 #testé avec Scribe 2.3
 #############################################
-# version 1.1
+# version 1.1 (avec proxy system)
 
 ###########################################################################
 #Paramétrage par défaut
