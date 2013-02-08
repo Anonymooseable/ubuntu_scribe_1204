@@ -186,8 +186,8 @@ chmod +x /etc/lightdm/logoffscript.sh
 #Paramétrage pour remplir pam_mount.conf
 ########################################################################
 
-eclairng="<volume user=\"*\" fstype=\"cifs\" server=\"$ip_scribe\" path=\"eclairng\" mountpoint=\"/media/Scribe\" />"
-grep "/media/Scribe" /etc/security/pam_mount.conf.xml  >/dev/null
+eclairng="<volume user=\"*\" fstype=\"cifs\" server=\"$ip_scribe\" path=\"eclairng\" mountpoint=\"/media/Serveur_Scribe\" />"
+grep "/media/Serveur_Scribe" /etc/security/pam_mount.conf.xml  >/dev/null
 if [ $? != 0 ]
 then
   sed -i "/<\!-- Volume definitions -->/a\ $eclairng" /etc/security/pam_mount.conf.xml
