@@ -98,7 +98,7 @@ echo "
 # /etc/ldap.conf
 host $ip_scribe
 base o=gouv, c=fr
-nss_override_attribute_value shadowMax 999
+nss_override_attribute_value shadowMax 9999
 " > /etc/ldap.conf
 
 ########################################################################
