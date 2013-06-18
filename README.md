@@ -14,3 +14,32 @@ avec la solution libre [OSCAR](http://oscar.crdp-lyon.fr/wiki/)
 	sudo ./client_scribe_12.04.sh
 
 **Remarque :** vous pouvez éditer les valeurs par défaut en début de script afin de les adapter à votre environnement.
+
+Pour personnaliser le menu à tous les utilisateurs, chercher dans le script ces lignes :
+
+########################################################################
+#supression de l'applet switch-user pour ne pas voir les derniers connectés
+#paramétrage d'un laucher unity par défaut : nautilus, firefox, libreoffice, calculatrice, editeur de texte et capture d'ecran
+########################################################################
+echo "[com.canonical.indicator.session]
+user-show-menu=false
+[org.gnome.desktop.lockdown]
+disable-user-switching=true
+disable-lock-screen=true
+[com.canonical.Unity.Launcher]
+favorites=[ 'nautilus-home.desktop', 'firefox.desktop','libreoffice-startcenter.desktop', 'gcalctool.desktop','gedit.desktop','gnome-screenshot.desktop' ]
+" > /usr/share/glib-2.0/schemas/my-defaults.gschema.override
+
+La ligne favorites=[ 'nautilus-home.desktop', 'firefox.desktop','libreoffice-startcenter.desktop', 'gcalctool.desktop','gedit.desktop','gnome-screenshot.desktop' ]
+est à adapter en fonction de vos besoins :
+
+Pour connaitre le nom des raccourcis, faire dans un terminal : ls /usr/share/applications/
+
+Pour voir à quelle application cela correspond, avec l'explorateur, il faut se déplacer dans /usr/share/applications/
+
+A noter que chaque élève ou enseignant peut personnaliser son menu.
+
+TO DO :
+
+- gestion centralisée des profils (navigateurs, session...)
+- gestion des mises à jour centralisées des postes clients
