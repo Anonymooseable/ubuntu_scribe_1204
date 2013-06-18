@@ -13,14 +13,17 @@ avec la solution libre [OSCAR](http://oscar.crdp-lyon.fr/wiki/)
 
 	sudo ./client_scribe_12.04.sh
 
-**Remarque :** vous pouvez éditer les valeurs par défaut en début de script afin de les adapter à votre environnement.
+##**Remarques :** 
+
+### Personnalisation des valeurs par défaut
+
+vous pouvez éditer les valeurs par défaut en début de script afin de les adapter à votre environnement.
+
+### Personnalisation des menus
 
 Pour personnaliser le menu à tous les utilisateurs, chercher dans le script ces lignes :
 
-########################################################################
-#supression de l'applet switch-user pour ne pas voir les derniers connectés
-#paramétrage d'un laucher unity par défaut : nautilus, firefox, libreoffice, calculatrice, editeur de texte et capture d'ecran
-########################################################################
+
 echo "[com.canonical.indicator.session]
 user-show-menu=false
 [org.gnome.desktop.lockdown]
@@ -39,7 +42,7 @@ Pour voir à quelle application cela correspond, avec l'explorateur, il faut se 
 
 A noter que chaque élève ou enseignant peut personnaliser son menu.
 
-TO DO :
+## TO DO :
 
 - gestion centralisée des profils (navigateurs, session...)
 - gestion des mises à jour centralisées des postes clients
