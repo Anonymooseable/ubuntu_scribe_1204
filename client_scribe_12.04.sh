@@ -25,8 +25,8 @@ pagedemarragepardefaut="http://www2.ac-lyon.fr/serv_ress/mission_tice/wiki/"
 if [ "$UID" -ne "0" ]
 then
   echo "Il faut etre root pour executer ce script. ==> sudo "
-  exit 
-fi 
+  exit
+fi
 
 ########################################################################
 #vérification de la bonne version d'Ubuntu
@@ -175,7 +175,7 @@ chmod +x /etc/lightdm/logonscript.sh
 
 touch /etc/lightdm/logoffscript.sh
 echo "sleep 2 \
-umount -f /tmp/netlogon \ 
+umount -f /tmp/netlogon \
 umount -f \$HOME
 " > /etc/lightdm/logoffscript.sh
 chmod +x /etc/lightdm/logoffscript.sh
@@ -277,7 +277,7 @@ favorites=[ 'nautilus-home.desktop', 'firefox.desktop','libreoffice-startcenter.
 #######################################################
 if  [ "$ip_proxy" != "" ] || [ $port_proxy != "" ] ; then
 
-  echo "Paramétrage du proxy $ip_proxy:$port_proxy" 
+  echo "Paramétrage du proxy $ip_proxy:$port_proxy"
 
 #Paramétrage des paramètres Proxy pour Gnome
 #######################################################
