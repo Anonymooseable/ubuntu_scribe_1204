@@ -12,12 +12,12 @@
 #Paramétrage par défaut
 #Changez les valeurs, ainsi, il suffira de taper 'entrée' à chaque question
 ###########################################################################
-scribe_def_ip="172.16.0.241"
-proxy_def_ip="172.16.0.252"
-proxy_def_port="3128"
+scribe_def_ip="10.169.176.241"
+proxy_def_ip=""
+proxy_def_port=""
 proxy_gnome_noproxy="[ 'localhost', '127.0.0.0/8', '172.16.0.0/16', '192.168.0.0/16', '*.crdp-lyon.fr', '*.crdplyon.lan' ]"
 proxy_env_noproxy="localhost,127.0.0.1,192.168.0.0/16,172.16.0.0/16,.crdp-lyon.fr,.crdplyon.lan"
-pagedemarragepardefaut="http://www2.ac-lyon.fr/serv_ress/mission_tice/wiki/"
+pagedemarragepardefaut="http://www.csilyon.fr/"
 
 #############################################
 # Run using sudo, of course.
@@ -261,7 +261,7 @@ echo "[SeatDefaults]
 
 ########################################################################
 #supression de l'applet switch-user pour ne pas voir les derniers connectés
-#paramétrage d'un laucher unity par défaut : nautilus, firefox, libreoffice, calculatrice, editeur de texte et capture d'ecran
+#paramétrage d'un laucher unity par défaut
 ########################################################################
 echo "[com.canonical.indicator.session]
 user-show-menu=false
@@ -269,7 +269,7 @@ user-show-menu=false
 disable-user-switching=true
 disable-lock-screen=true
 [com.canonical.Unity.Launcher]
-favorites=[ 'nautilus-home.desktop', 'firefox.desktop', 'libreoffice-startcenter.desktop', 'gnome-screenshot.desktop', 'geogebra.desktop', ]
+favorites=[ 'nautilus-home.desktop', 'firefox.desktop', 'libreoffice-startcenter.desktop', 'geogebra.desktop', 'idle-python3.2.desktop', 'algobox.desktop', 'carmetal.desktop', 'scilab.desktop', 'gimp.desktop']
 " > /usr/share/glib-2.0/schemas/my-defaults.gschema.override
 
 #######################################################
@@ -323,6 +323,10 @@ echo "enabled=0" >/etc/default/apport
 #suppression de l'applet network-manager
 ########################################################################
 sed -i "s/X-GNOME-Autostart-enabled=true/X-GNOME-Autostart-enabled=false/g" /etc/xdg/autostart/nm-applet.desktop
+
+# Installation de logiciels
+apt-get -y install gimp okteta inkscape geogebra algobox idle3 carmetal scilab
+
 
 ########################################################################
 #suppression du menu messages
