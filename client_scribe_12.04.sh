@@ -269,7 +269,7 @@ user-show-menu=false
 disable-user-switching=true
 disable-lock-screen=true
 [com.canonical.Unity.Launcher]
-favorites=[ 'nautilus-home.desktop', 'firefox.desktop','libreoffice-startcenter.desktop', 'gcalctool.desktop','gedit.desktop','gnome-screenshot.desktop' ]
+favorites=[ 'nautilus-home.desktop', 'firefox.desktop', 'libreoffice-startcenter.desktop', 'gnome-screenshot.desktop', 'geogebra.desktop', ]
 " > /usr/share/glib-2.0/schemas/my-defaults.gschema.override
 
 #######################################################
